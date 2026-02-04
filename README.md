@@ -36,18 +36,18 @@ cd ../admin && npm install
 ### 2. Configure Environment Variables
 
 #### Backend (.env)
-Create `backend/.env` file:
+Create `backend/.env` file (copy from `backend/.env.example`):
 ```env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/ecommerce
-JWT_SECRET=your_super_secret_jwt_key
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=admin123
-CLOUDINARY_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_SECRET_KEY=your_secret_key
-STRIPE_SECRET_KEY=sk_test_xxx
-RAZORPAY_KEY_ID=rzp_test_xxx
-RAZORPAY_KEY_SECRET=xxx
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+ADMIN_EMAIL=your_admin_email
+ADMIN_PASSWORD=your_admin_password
+CLOUDINARY_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_SECRET_KEY=your_cloudinary_secret
+STRIPE_SECRET_KEY=your_stripe_secret_key
+RAZORPAY_KEY_ID=your_razorpay_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_secret
 PORT=4000
 ```
 
