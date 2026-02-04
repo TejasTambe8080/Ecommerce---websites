@@ -13,10 +13,10 @@ const About = () => {
       <div className='my-10 flex flex-col md:flex-row gap-16'>
         <img className='w-full md:max-w-[450px]' src={assets.about_img} alt=""/>
         <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-600'>
-          <p>Cartiva is a modern e-commerce platform built with a clear purpose: to make quality, style, and reliability accessible to everyone. We curate a diverse range of products that balance contemporary design with everyday practicality, ensuring that each item meets our standards for value and durability. From browsing to checkout, our platform is designed to deliver a smooth, secure, and intuitive shopping experience across all devices.</p>
-          <p>At Cartiva, we believe in long-term relationships, not one-time transactions. We are committed to transparent pricing, dependable delivery, and responsive customer support, so our customers can shop with confidence. As we continue to grow, our focus remains on innovation, trust, and consistency—creating an online marketplace that customers return to, time and again.</p>
+          <p>Cartiva was born from a simple idea — to make quality products accessible and affordable for every Indian family. Whether you're a college student looking for trendy fashion, a homemaker shopping for the family, or a professional who values convenience, Cartiva is built for you. We understand the needs of Indian shoppers — great value, genuine products, and reliable service.</p>
+          <p>At Cartiva, we don't just sell products; we build relationships. Every order is packed with care, every delivery is tracked, and every customer is treated like family. From metros to small towns, we're proud to serve customers across India with the same dedication and trust. Your satisfaction is not just our goal — it's our promise.</p>
           <b className='text-gray-800'>Our Mission</b>
-          <p>Our mission is to provide a seamless and trustworthy online shopping experience by offering high-quality products, transparent pricing, and reliable service. We strive to continuously improve our platform through innovation and customer-focused design, ensuring convenience, security, and satisfaction at every step of the journey.</p>
+          <p>To empower every Indian shopper with a seamless, trustworthy, and affordable online shopping experience. We believe good quality shouldn't come with a heavy price tag. That's why we work hard to bring you the best products at honest prices, with fast delivery and friendly support — because you deserve nothing less.</p>
         </div>
       </div>
       
@@ -26,18 +26,18 @@ const About = () => {
       
       <div className='flex flex-col md:flex-row text-sm mb-20'>
         <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5'>
-          <b>Quality Assurance:</b>
-          <p className='text-gray-600'>We ensure that every product listed on Cartiva meets strict quality standards. Our team carefully selects items that combine durability, functionality, and style, providing customers with reliable choices that stand the test of time.</p>
+          <b>Genuine Quality, Always:</b>
+          <p className='text-gray-600'>Every product on Cartiva goes through strict quality checks. We partner only with trusted suppliers so you get authentic, durable products that are worth every rupee you spend. No fake products, no compromise — just genuine quality.</p>
         </div>
         
         <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5'>
-          <b>Convenience:</b>
-          <p className='text-gray-600'>Our platform is designed to provide a seamless and user-friendly shopping experience. With intuitive navigation, multiple payment options, and responsive customer support, we make it easy for customers to find and purchase what they need, anytime and anywhere.</p>
+          <b>Shop Anytime, Anywhere:</b>
+          <p className='text-gray-600'>Whether you're on your phone during a chai break or browsing on laptop at night, Cartiva works smoothly everywhere. With easy navigation, multiple payment options including UPI, COD, and cards, shopping has never been this convenient.</p>
         </div>
         
         <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5'>
-          <b>Exceptional Customer Services:</b>
-          <p className='text-gray-600'>We prioritize our customers by offering responsive and helpful support throughout their shopping journey. Our dedicated team is available to assist with inquiries, resolve issues promptly, and ensure a positive experience from start to finish.</p>
+          <b>Customer First, Always:</b>
+          <p className='text-gray-600'>Got a question? Need help with an order? Our dedicated support team is just a message away. We speak your language, understand your concerns, and resolve issues quickly — because happy customers are our biggest reward.</p>
         </div>
       </div>
       <NewsletterBox/>

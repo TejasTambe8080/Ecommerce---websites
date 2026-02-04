@@ -14,7 +14,7 @@ const Footer = () => {
         <div className="sm:w-1/2">
           <Logo className="w-32 mb-5" />
           <p className="text-gray-600 w-full md:w-2/3">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Cartiva is India's trusted online shopping destination. We bring you affordable fashion, reliable quality, and hassle-free delivery — because every Indian deserves to shop with confidence.
           </p>
         </div>
 
