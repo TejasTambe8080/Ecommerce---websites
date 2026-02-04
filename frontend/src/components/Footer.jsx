@@ -14,18 +14,18 @@ const Footer = () => {
         <div className="sm:w-1/2">
           <Logo className="w-32 mb-5" />
           <p className="text-gray-600 w-full md:w-2/3">
-            Cartiva is India's trusted online shopping destination. We bring you affordable fashion, reliable quality, and hassle-free delivery — because every Indian deserves to shop with confidence.
+            Cartiva — smart, reliable, and affordable online shopping made for India. Genuine products, secure payments, easy returns, and fast delivery to your doorstep. Shopping you can trust, value that matters.
           </p>
         </div>
 
         {/* COMPANY */}
         <div>
-          <p className="text-xl font-medium mb-5">COMPANY</p>
+          <p className="text-xl font-medium mb-5">QUICK LINKS</p>
           <ul className="flex flex-col gap-1 text-gray-600">
             <li><Link to="/" className="hover:text-black transition-colors">Home</Link></li>
-            <li><Link to="/about" className="hover:text-black transition-colors">About Us</Link></li>
-            <li><Link to="/collection" className="hover:text-black transition-colors">Delivery</Link></li>
-            <li><Link to="/contact" className="hover:text-black transition-colors">Privacy Policy</Link></li>
+            <li><Link to="/collection" className="hover:text-black transition-colors">Shop All</Link></li>
+            <li><Link to="/about" className="hover:text-black transition-colors">About Cartiva</Link></li>
+            <li><Link to="/contact" className="hover:text-black transition-colors">Contact Us</Link></li>
           </ul>
         </div>
 
@@ -43,7 +43,7 @@ const Footer = () => {
       <div className="mt-10">
         <hr />
         <p className="text-gray-600 text-sm mt-5 text-center">
-          Copyright © 2024 Cartiva.com All Rights Reserved.
+          © 2026 Cartiva. Made with ❤️ for India. All Rights Reserved.
         </p>
       </div>
 

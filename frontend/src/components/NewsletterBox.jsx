@@ -7,11 +7,11 @@ const NewsletterBox = () => {
   return (
     <div className='text-center'>
       <p className='text-2xl font-medium text-gray-800'>
-        Join the Cartiva Family & Get 20% Off!
+        Flat 20% Off on Your First Order!
       </p>
 
       <p className='text-gray-400 mt-3'>
-        Subscribe now for exclusive deals, new arrivals, and special offers delivered straight to your inbox. Shop smart, save more!
+        Join lakhs of happy Indian shoppers. Get exclusive deals, early access to sales, and new arrivals straight to your inbox. Value that matters, delivered to you.
       </p>
 
       <form  onSubmit={onSubmitHandler}  className='w-full sm:w-1/2 flex items-center gap-3 mx-auto my-6 border pl-3'>

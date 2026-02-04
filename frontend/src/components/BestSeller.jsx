@@ -15,9 +15,9 @@ const BestSeller = () => {
   return (
     <div className="my-10">
       <div className="text-center py-8 text-3xl">
-        <Title text1={'BEST'} text2={'SELLER'} />
+        <Title text1={'CUSTOMER'} text2={'FAVORITES'} />
         <p className="w-3/4 m-auto text-xs sm:text-base text-gray-600">
-          Top picks loved by thousands of happy customers across India. Great value, great style — see what's trending!
+          Value that matters! These top-rated picks are loved by thousands of Indian families. Trusted quality, unbeatable prices — see why customers keep coming back.
         </p>
       </div>
 

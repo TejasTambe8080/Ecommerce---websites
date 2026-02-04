@@ -14,9 +14,9 @@ const LatestCollection = () => {
   return (
     <div className='my-10'>
       <div className='text-center py-8 text-3xl'>
-        <Title text1={'LATEST'} text2={'COLLECTION'} />
+        <Title text1={'FRESH'} text2={'ARRIVALS'} />
         <p className='w-3/4 m-auto text-xs sm:text-base text-gray-600'>
-          Discover our freshest arrivals! Handpicked styles at prices that fit every Indian budget. Quality you can trust, delivered to your doorstep.
+          Made for Indian homes. Browse our newest collection — handpicked styles, honest prices, and doorstep delivery across India. Find what you love, add to cart, and checkout in seconds!
         </p>
       </div>
       {/* Rendering Product */}
