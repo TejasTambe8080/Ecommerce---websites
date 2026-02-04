@@ -43,7 +43,7 @@ const Footer = () => {
       <div className="mt-10">
         <hr />
         <p className="text-gray-600 text-sm mt-5 text-center">
-          © 2026 Cartiva. Made with ❤️ for India. All Rights Reserved.
+          © {new Date().getFullYear()} Cartiva. Made with ❤️ for India. All Rights Reserved.
         </p>
       </div>
 

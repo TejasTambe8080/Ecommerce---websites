@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { assets } from '../assets/assets'
 
 const Hero = () => {
@@ -13,9 +14,13 @@ const Hero = () => {
 
           <h1 className='prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed'>Shopping You Can Trust</h1>
           
-          <div className='flex items-center gap-2'>
-            <p className='font-semibold text-sm md:text-base'>START SHOPPING</p>
-            <p className='w-8 md:w-11 h-[1px] bg-[#414141]'></p>
+          <div className='flex flex-col sm:flex-row gap-4 mt-6'>
+            <Link to='/login' className='bg-black text-white px-8 py-3 text-sm font-medium hover:bg-gray-800 transition-all text-center'>
+              SHOP NOW
+            </Link>
+            <Link to='/collection' className='border border-black px-8 py-3 text-sm font-medium hover:bg-black hover:text-white transition-all text-center'>
+              BROWSE CATEGORIES
+            </Link>
           </div>
         </div>
       </div>
