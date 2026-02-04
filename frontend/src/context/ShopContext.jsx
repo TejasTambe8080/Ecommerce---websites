@@ -8,7 +8,7 @@ export const ShopContext = createContext()
 const ShopContextProvider = (props) => {
   const currency = '₹'
   const delivery_fee = 10
-  const backendURL = import.meta.env.VITE_BACKEND_URL
+  const backendURL = import.meta.env.VITE_BACKEND_URL || 'https://cartiva-ecommerce.onrender.com'
   const navigate = useNavigate()
 
   const [search, setSearch] = useState('')

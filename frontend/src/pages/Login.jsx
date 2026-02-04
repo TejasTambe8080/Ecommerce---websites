@@ -17,7 +17,7 @@ const Login = () => {
     try {
       if (currentState === 'Sign Up') {
         const response = await axios.post(
-          backendURL + '/api/user/register',
+          backendURL + '/api/users/register',
           { name, email, password }
         )
 
@@ -29,7 +29,7 @@ const Login = () => {
         }
       } else {
         const response = await axios.post(
-          backendURL + '/api/user/login',
+          backendURL + '/api/users/login',
           { email, password }
         )
 
