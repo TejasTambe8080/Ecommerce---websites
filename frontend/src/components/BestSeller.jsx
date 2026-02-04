@@ -13,15 +13,15 @@ const BestSeller = () => {
   }, [products])
 
   return (
-    <div className="my-10">
-      <div className="text-center py-8 text-3xl">
+    <div className="my-8 sm:my-10 px-2 sm:px-0">
+      <div className="text-center py-6 sm:py-8 text-2xl sm:text-3xl">
         <Title text1={'CUSTOMER'} text2={'FAVORITES'} />
-        <p className="w-3/4 m-auto text-xs sm:text-base text-gray-600">
-          Value that matters! These top-rated picks are loved by thousands of Indian families. Trusted quality, unbeatable prices — see why customers keep coming back.
+        <p className="w-11/12 sm:w-3/4 m-auto text-xs sm:text-base text-gray-600">
+          Value that matters! These top-rated picks are loved by thousands of Indian families.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-5">
         {bestSellerProducts.map((item, index) => (
           <Link
             to={`/product/${item._id}`}

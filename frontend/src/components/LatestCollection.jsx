@@ -12,15 +12,15 @@ const LatestCollection = () => {
   }, [products]);
 
   return (
-    <div className='my-10'>
-      <div className='text-center py-8 text-3xl'>
+    <div className='my-8 sm:my-10 px-2 sm:px-0'>
+      <div className='text-center py-6 sm:py-8 text-2xl sm:text-3xl'>
         <Title text1={'FRESH'} text2={'ARRIVALS'} />
-        <p className='w-3/4 m-auto text-xs sm:text-base text-gray-600'>
-          Made for Indian homes. Browse our newest collection — handpicked styles, honest prices, and doorstep delivery across India. Find what you love, add to cart, and checkout in seconds!
+        <p className='w-11/12 sm:w-3/4 m-auto text-xs sm:text-base text-gray-600'>
+          Made for Indian homes. Browse our newest collection — handpicked styles, honest prices, and doorstep delivery across India.
         </p>
       </div>
       {/* Rendering Product */}
-        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4'> 
+        <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4'> 
             {latestProducts.map((item,index) => (
                 <ProductItem key={item._id} id={item._id} image={item.images?.[0] || item.images} name={item.name} price={item.price} />
             ))}
