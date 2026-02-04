@@ -1,5 +1,6 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import Logo from './Logo'
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
 
         {/* LEFT SECTION */}
         <div className="sm:w-1/2">
-          <img src={assets.logo} alt="logo" className="w-32 mb-5" />
+          <Logo className="w-32 mb-5" />
           <p className="text-gray-600 w-full md:w-2/3">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
           </p>

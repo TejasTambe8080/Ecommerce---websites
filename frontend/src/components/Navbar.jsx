@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react'
 import { assets } from '../assets/assets'
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext.jsx'
+import Logo from './Logo'
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false)
@@ -19,7 +20,7 @@ const Navbar = () => {
     <div className="flex items-center justify-between p-5 font-medium relative">
       {/* Logo */}
       <Link to="/">
-        <img src={assets.logo} alt="logo" className="w-36" />
+        <Logo className="w-36" />
       </Link>
 
       {/* Desktop links */}
