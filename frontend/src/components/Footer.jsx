@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { assets } from '../assets/assets'
 import Logo from './Logo'
 
@@ -21,10 +22,10 @@ const Footer = () => {
         <div>
           <p className="text-xl font-medium mb-5">COMPANY</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>Home</li>
-            <li>About Us</li>
-            <li>Delivery</li>
-            <li>Privacy Policy</li>
+            <li><Link to="/" className="hover:text-black transition-colors">Home</Link></li>
+            <li><Link to="/about" className="hover:text-black transition-colors">About Us</Link></li>
+            <li><Link to="/collection" className="hover:text-black transition-colors">Delivery</Link></li>
+            <li><Link to="/contact" className="hover:text-black transition-colors">Privacy Policy</Link></li>
           </ul>
         </div>
 
@@ -32,8 +33,8 @@ const Footer = () => {
         <div>
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-1 text-gray-600">
-            <li>+91 9006018080</li>
-            <li>contact@cartiva.com</li>
+            <li><a href="tel:+919006018080" className="hover:text-black transition-colors">+91 9006018080</a></li>
+            <li><a href="mailto:contact@cartiva.com" className="hover:text-black transition-colors">contact@cartiva.com</a></li>
           </ul>
         </div>
       </div>
