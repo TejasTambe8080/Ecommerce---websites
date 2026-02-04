@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment files (IMPORTANT - contains secrets!)
+.env
+.env.local
+.env.*.local
+backend/.env
+admin/.env
+frontend/.env
+
+# Build outputs
+dist/
+build/
+*/dist/
+*/build/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp files
+*.tmp
+*.temp
+
+# Upload directory
+uploads/
+backend/uploads/
+
+# Lock files (optional - some prefer to keep these)
+# package-lock.json
+# yarn.lock
+
+# Coverage
+coverage/
+
+# Cache
+.cache/
+*.cache
