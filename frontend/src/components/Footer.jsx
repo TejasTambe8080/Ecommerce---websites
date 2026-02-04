@@ -32,7 +32,7 @@ const Footer = () => {
           <p className="text-xl font-medium mb-5">GET IN TOUCH</p>
           <ul className="flex flex-col gap-1 text-gray-600">
             <li>+91 9006018080</li>
-            <li>contact@forever.com</li>
+            <li>contact@cartiva.com</li>
           </ul>
         </div>
       </div>
@@ -41,7 +41,7 @@ const Footer = () => {
       <div className="mt-10">
         <hr />
         <p className="text-gray-600 text-sm mt-5 text-center">
-          Copyright © 2024 Forever.com All Rights Reserved.
+          Copyright © 2024 Cartiva.com All Rights Reserved.
         </p>
       </div>
 
