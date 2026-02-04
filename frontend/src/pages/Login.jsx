@@ -65,11 +65,11 @@ const Login = () => {
         <hr className='border-none h-[1.5px] w-8 bg-gray-800' />
       </div>
 
-      <div className='flex flex-col gap-4 w-full mb-10 bg-blue-100 p-6'>
+      <div className='flex flex-col gap-4 w-full mb-10 bg-gradient-to-r from-orange-50 to-green-50 p-6 rounded-lg'>
         {currentState === 'Sign Up' && (
           <input
             onChange={(e) => setName(e.target.value)}
-            className='w-full border border-gray-800 px-3 py-2'
+            className='w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-gray-500'
             type='text'
             placeholder='Name'
             required
@@ -79,7 +79,7 @@ const Login = () => {
         <input
           onChange={(e) => setEmail(e.target.value)}
           type='email'
-          className='w-full border border-gray-800 px-3 py-2'
+          className='w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-gray-500'
           placeholder='Email'
           required
         />
@@ -87,7 +87,7 @@ const Login = () => {
         <input
           onChange={(e) => setPassword(e.target.value)}
           type='password'
-          className='w-full border border-gray-800 px-3 py-2'
+          className='w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-gray-500'
           placeholder='Password'
           required
         />
@@ -112,7 +112,7 @@ const Login = () => {
           )}
         </div>
 
-        <button className='bg-black text-white font-light px-8 py-2 mt-4'>
+        <button className='bg-black text-white font-medium px-8 py-3 mt-4 hover:bg-gray-800 transition-all rounded'>
           {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
         </button>
       </div>

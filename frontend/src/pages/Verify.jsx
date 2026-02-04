@@ -25,7 +25,7 @@ const Verify = () => {
       if (response.data.success) {
         setCartItems({});
         toast.success('Payment verified successfully');
-        navigate('/orders');
+        navigate('/order-success');
       } else {
         toast.error('Payment failed');
         navigate('/cart');

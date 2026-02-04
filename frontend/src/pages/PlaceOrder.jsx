@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Title from '../components/Title.jsx';
 import CartTotal from '../components/CartTotal.jsx';
@@ -20,6 +20,14 @@ const PlaceOrder = () => {
   } = useContext(ShopContext);
 
   const navigate = useNavigate();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!token) {
+      toast.info('Please login to place an order');
+      navigate('/login');
+    }
+  }, [token, navigate]);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -108,7 +116,7 @@ const PlaceOrder = () => {
             key: key,
             amount: razorpayOrder.amount,
             currency: razorpayOrder.currency,
-            name: 'E-Commerce App',
+            name: 'Cartiva',
             description: 'Order Payment',
             order_id: razorpayOrder.id,
             handler: async function (response) {
@@ -127,7 +135,7 @@ const PlaceOrder = () => {
                 if (verifyResponse.data.success) {
                   toast.success('Payment successful!');
                   setCartItems({});
-                  navigate('/orders');
+                  navigate('/order-success');
                 } else {
                   toast.error('Payment verification failed');
                 }

@@ -114,12 +114,12 @@ const Product = () => {
 
         <div className='flex flex-col gap-4 border px-6 py-6 text-sm text-gray-500'>
           <p>
-            An e-commerce website is an online platform where businesses sell
-            products or services directly to consumers over the internet.
+            At Cartiva, we bring you quality products made for Indian homes. 
+            Every item is carefully selected to ensure the best value and durability.
           </p>
           <p>
-            E-commerce websites typically display products or services along with
-            detailed information.
+            Shop with confidence - we offer easy returns, cash on delivery, 
+            and fast shipping across India.
           </p>
         </div>
       </div>
