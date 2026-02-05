@@ -5,12 +5,20 @@ import { ShopContext } from '../context/ShopContext.jsx'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login')
-  const { token, setToken, navigate, backendURL } = useContext(ShopContext)
+  const { token, setToken, navigate, backendURL, isAuthenticated } = useContext(ShopContext)
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Redirect to home if already logged in - check on mount only
+  useEffect(() => {
+    if (isAuthenticated()) {
+      console.log('Login: User already authenticated, redirecting to home')
+      navigate('/')
+    }
+  }, []) // Empty dependency - only check on mount
 
   // Clear form when switching between Login and Sign Up
   const handleStateChange = (newState) => {
@@ -33,8 +41,8 @@ const Login = () => {
 
         if (response.data.success) {
           setToken(response.data.token)
-          localStorage.setItem('token', response.data.token)
           toast.success('Account created successfully!')
+          navigate('/') // Navigate after successful signup
         } else {
           toast.error(response.data.message)
         }
@@ -46,8 +54,8 @@ const Login = () => {
 
         if (response.data.success) {
           setToken(response.data.token)
-          localStorage.setItem('token', response.data.token)
           toast.success('Login successful!')
+          navigate('/') // Navigate after successful login
         } else {
           toast.error(response.data.message)
         }
@@ -59,16 +67,6 @@ const Login = () => {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    if (!token && localStorage.getItem('token')) {
-      setToken(localStorage.getItem('token'))
-    }
-
-    if (token) {
-      navigate('/')
-    }
-  }, [token, navigate, setToken])
 
   return (
     <form

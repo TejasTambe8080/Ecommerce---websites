@@ -7,16 +7,8 @@ import Logo from './Logo'
 const Navbar = () => {
   const [visible, setVisible] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)
-  const { setShowSearch, getCardCount, navigate, token, setToken, setCartItems } =
+  const { setShowSearch, getCardCount, navigate, token, setToken, setCartItems, isAuthenticated } =
     useContext(ShopContext)
-  
-  // Also check localStorage for token (in case context hasn't loaded yet)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  
-  useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    setIsLoggedIn(!!(token || storedToken))
-  }, [token])
 
   const logout = () => {
     localStorage.removeItem('token')
@@ -26,9 +18,10 @@ const Navbar = () => {
     navigate('/login')
   }
   
-  const handleProfileClick = () => {
-    const storedToken = localStorage.getItem('token')
-    if (token || storedToken) {
+  const handleProfileClick = (e) => {
+    e.stopPropagation()
+    console.log('Profile icon clicked, isAuthenticated:', isAuthenticated())
+    if (isAuthenticated()) {
       setShowDropdown(!showDropdown)
     } else {
       navigate('/login')
@@ -36,6 +29,7 @@ const Navbar = () => {
   }
   
   const goToProfile = () => {
+    console.log('Navigating to profile')
     setShowDropdown(false)
     navigate('/profile')
   }
@@ -107,7 +101,7 @@ const Navbar = () => {
           />
 
           {/* Drop down - now using click instead of hover */}
-          {isLoggedIn && showDropdown && (
+          {isAuthenticated && showDropdown && (
             <div className="absolute right-0 pt-4 z-50">
               <div className="flex flex-col gap-2 w-40 py-3 px-5 bg-white border border-gray-200 rounded-lg shadow-lg text-gray-600">
                 <p

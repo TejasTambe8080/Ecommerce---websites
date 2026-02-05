@@ -5,20 +5,6 @@ import { useNavigate } from 'react-router-dom'
 
 export const ShopContext = createContext()
 
-// Get initial token from localStorage (outside component to run immediately)
-const getInitialToken = () => {
-  try {
-    const storedToken = localStorage.getItem('token')
-    if (storedToken && storedToken.split('.').length === 3) {
-      console.log('Token found in localStorage')
-      return storedToken
-    }
-  } catch (e) {
-    console.log('Error reading token from localStorage')
-  }
-  return ''
-}
-
 const ShopContextProvider = (props) => {
   const currency = '₹'
   const delivery_fee = 10
@@ -30,9 +16,43 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({})
   const [products, setProducts] = useState([])
   
-  // Initialize token from localStorage immediately to prevent redirect issues
-  const [token, setToken] = useState(getInitialToken)
+  // ========================================
+  // AUTH STATE - Initialize from localStorage
+  // ========================================
+  const [token, setTokenState] = useState(() => {
+    const storedToken = localStorage.getItem('token')
+    console.log('ShopContext Init - Token from localStorage:', !!storedToken)
+    return storedToken || ''
+  })
 
+  // Custom setToken that also updates localStorage
+  const setToken = (newToken) => {
+    console.log('setToken called with:', !!newToken)
+    if (newToken) {
+      localStorage.setItem('token', newToken)
+    } else {
+      localStorage.removeItem('token')
+    }
+    setTokenState(newToken)
+  }
+
+  // Check if user is authenticated
+  const isAuthenticated = () => {
+    const storedToken = localStorage.getItem('token')
+    return !!(token || storedToken)
+  }
+
+  // Handle invalid token responses globally
+  const handleTokenError = () => {
+    console.log('Token error - clearing auth')
+    localStorage.removeItem('token')
+    setTokenState('')
+    setCartItems({})
+  }
+
+  // ========================================
+  // CART FUNCTIONS
+  // ========================================
   const addToCart = (itemId, size) => {
     if (!size) {
       toast.error('Please select a size')
@@ -55,16 +75,16 @@ const ShopContextProvider = (props) => {
     setCartItems(cartData)
     toast.success('Added to cart')
 
-    if (token) {
+    const authToken = token || localStorage.getItem('token')
+    if (authToken) {
       try {
         axios.post(
           backendURL + '/api/cart/add',
           { itemId, size },
-          { headers: { token } }
+          { headers: { token: authToken } }
         )
       } catch (error) {
         console.log('Error in adding to cart on backend', error)
-        toast.error('Failed to sync cart with server')
       }
     }
   }
@@ -80,14 +100,12 @@ const ShopContextProvider = (props) => {
       if (response.data.success) {
         setCartItems(response.data.cartData)
       } else {
-        // Don't show error for auth issues - just clear token
         if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
           handleTokenError()
         }
       }
     } catch (error) {
       console.log('Error fetching cart:', error)
-      // Don't show toast for cart fetch errors on page load
     }
   }
 
@@ -99,7 +117,6 @@ const ShopContextProvider = (props) => {
 
   const getCardCount = () => {
     let totalCount = 0
-
     for (const items in cartItems) {
       for (const item in cartItems[items]) {
         if (cartItems[items][item] > 0) {
@@ -110,6 +127,23 @@ const ShopContextProvider = (props) => {
     return totalCount
   }
 
+  const getCardAmount = () => {
+    let totalAmount = 0
+    for (const items in cartItems) {
+      const itemInfo = products.find((product) => product._id === items)
+      if (!itemInfo) continue
+      for (const item in cartItems[items]) {
+        if (cartItems[items][item] > 0) {
+          totalAmount += cartItems[items][item] * itemInfo.price
+        }
+      }
+    }
+    return totalAmount
+  }
+
+  // ========================================
+  // PRODUCTS
+  // ========================================
   const getProductDta = async () => {
     try {
       const response = await axios.get(backendURL + '/api/products/list')
@@ -123,47 +157,28 @@ const ShopContextProvider = (props) => {
     }
   }
 
-  const getCardAmount = () => {
-    let totalAmount = 0
-
-    for (const items in cartItems) {
-      const itemInfo = products.find(
-        (product) => product._id === items
-      )
-
-      if (!itemInfo) continue
-
-      for (const item in cartItems[items]) {
-        if (cartItems[items][item] > 0) {
-          totalAmount += cartItems[items][item] * itemInfo.price
-        }
-      }
-    }
-    return totalAmount
-  }
-
+  // ========================================
+  // EFFECTS
+  // ========================================
   useEffect(() => {
     getProductDta()
   }, [])
 
-  // Load cart data when token is available
+  // Load cart when token changes
   useEffect(() => {
-    if (token) {
-      getuserCart(token)
+    const authToken = token || localStorage.getItem('token')
+    if (authToken) {
+      getuserCart(authToken)
     }
   }, [token])
-
-  // Handle invalid token responses globally
-  const handleTokenError = () => {
-    localStorage.removeItem('token');
-    setToken('');
-    setCartItems({});
-  }
 
   useEffect(() => {
     console.log('Cart Items Updated:', cartItems)
   }, [cartItems])
 
+  // ========================================
+  // CONTEXT VALUE
+  // ========================================
   const value = {
     products,
     currency,
@@ -181,6 +196,7 @@ const ShopContextProvider = (props) => {
     backendURL,
     setToken,
     token,
+    isAuthenticated,
     setCartItems,
     navigate,
     handleTokenError

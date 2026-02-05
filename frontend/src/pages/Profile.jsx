@@ -8,12 +8,7 @@ import AddressModal from '../components/AddressModal.jsx';
 import { Link } from 'react-router-dom';
 
 const Profile = () => {
-  const { token, backendURL, navigate, handleTokenError, setToken } = useContext(ShopContext);
-  
-  // Get token from localStorage directly (more reliable)
-  const getAuthToken = () => {
-    return token || localStorage.getItem('token');
-  };
+  const { token, backendURL, handleTokenError, isAuthenticated } = useContext(ShopContext);
   
   // User profile state
   const [user, setUser] = useState(null);
@@ -35,17 +30,15 @@ const Profile = () => {
 
   // Fetch user profile on mount
   useEffect(() => {
-    const authToken = getAuthToken();
+    const authToken = token || localStorage.getItem('token');
+    console.log('Profile: Checking auth token:', !!authToken);
+    
     if (authToken) {
-      // Sync token to context if not already there
-      if (!token && authToken) {
-        setToken(authToken);
-      }
       fetchProfile(authToken);
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   // Fetch user profile
   const fetchProfile = async (authToken) => {
@@ -56,12 +49,14 @@ const Profile = () => {
     
     try {
       setLoading(true);
+      console.log('Profile: Fetching profile with token');
       const response = await axios.get(
         `${backendURL}/api/users/profile`,
         { headers: { token: authToken } }
       );
 
       if (response.data.success) {
+        console.log('Profile: Data received successfully');
         setUser(response.data.user);
         setEditForm({
           name: response.data.user.name,
@@ -69,6 +64,7 @@ const Profile = () => {
         });
         setImagePreview(response.data.user.profileImage || '');
       } else {
+        console.log('Profile: Error response:', response.data.message);
         if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
           handleTokenError();
         } else {
@@ -260,7 +256,7 @@ const Profile = () => {
   }
 
   // Show login prompt if not logged in
-  if (!getAuthToken()) {
+  if (!isAuthenticated()) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
         <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
