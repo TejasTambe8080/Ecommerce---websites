@@ -407,7 +407,3 @@ export {
     deleteAddress,
     setDefaultAddress
 };
-    }
-};
-
-export { loginUser, registerUser, adminLogin };
