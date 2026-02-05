@@ -14,6 +14,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   
   // Edit form state
   const [editForm, setEditForm] = useState({
@@ -27,17 +28,29 @@ const Profile = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
-  // Redirect if not logged in - check localStorage directly as backup
+  // Check auth on mount - only redirect if truly not logged in
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (!token && !storedToken) {
-      navigate('/login');
-    }
-  }, [token, navigate]);
+    const checkAuth = () => {
+      const storedToken = localStorage.getItem('token');
+      console.log('Profile: Checking auth - token:', !!token, 'storedToken:', !!storedToken);
+      
+      if (!token && !storedToken) {
+        console.log('Profile: No token found, redirecting to login');
+        navigate('/login');
+      }
+      setAuthChecked(true);
+    };
+    
+    // Small delay to ensure context is initialized
+    const timer = setTimeout(checkAuth, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch user profile
   const fetchProfile = async () => {
-    if (!token) {
+    const authToken = token || localStorage.getItem('token');
+    
+    if (!authToken) {
       setLoading(false);
       return;
     }
@@ -46,7 +59,7 @@ const Profile = () => {
       setLoading(true);
       const response = await axios.get(
         `${backendURL}/api/users/profile`,
-        { headers: { token } }
+        { headers: { token: authToken } }
       );
 
       if (response.data.success) {
@@ -60,17 +73,17 @@ const Profile = () => {
         // Handle invalid token
         if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
           handleTokenError();
+          navigate('/login');
         } else {
           toast.error(response.data.message);
         }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
-      // Don't show error for 404 or auth issues
+      // Only redirect on actual auth errors, not network errors
       if (error.response?.status === 401 || error.response?.status === 403) {
         handleTokenError();
-      } else if (error.response?.status !== 404) {
-        toast.error('Failed to load profile');
+        navigate('/login');
       }
     } finally {
       setLoading(false);
@@ -78,10 +91,11 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    if (token) {
+    const authToken = token || localStorage.getItem('token');
+    if (authToken && authChecked) {
       fetchProfile();
     }
-  }, [token]);
+  }, [token, authChecked]);
 
   // Handle profile image change
   const handleImageChange = (e) => {
