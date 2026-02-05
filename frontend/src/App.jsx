@@ -11,6 +11,7 @@ import PlaceOrder from './pages/PlaceOrder.jsx'
 import Orders from './pages/Orders.jsx'
 import Verify from './pages/Verify.jsx'
 import OrderSuccess from './pages/OrderSuccess.jsx'
+import Profile from './pages/Profile.jsx'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
 import SearchBar from './components/SearchBar.jsx'
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/orders" element={<Orders />} />
         <Route path='/verify' element={<Verify />} />
         <Route path='/order-success' element={<OrderSuccess />} />
+        <Route path='/profile' element={<Profile />} />
       </Routes>
 
       <Footer />
