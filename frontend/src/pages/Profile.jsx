@@ -7,7 +7,7 @@ import AddressCard from '../components/AddressCard.jsx';
 import AddressModal from '../components/AddressModal.jsx';
 
 const Profile = () => {
-  const { token, backendURL, navigate, handleTokenError, tokenLoaded } = useContext(ShopContext);
+  const { token, backendURL, navigate, handleTokenError } = useContext(ShopContext);
   
   // User profile state
   const [user, setUser] = useState(null);
@@ -27,12 +27,13 @@ const Profile = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
-  // Redirect if not logged in (only after token is loaded)
+  // Redirect if not logged in - check localStorage directly as backup
   useEffect(() => {
-    if (tokenLoaded && !token) {
+    const storedToken = localStorage.getItem('token');
+    if (!token && !storedToken) {
       navigate('/login');
     }
-  }, [token, navigate, tokenLoaded]);
+  }, [token, navigate]);
 
   // Fetch user profile
   const fetchProfile = async () => {

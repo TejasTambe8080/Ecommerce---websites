@@ -5,6 +5,20 @@ import { useNavigate } from 'react-router-dom'
 
 export const ShopContext = createContext()
 
+// Get initial token from localStorage (outside component to run immediately)
+const getInitialToken = () => {
+  try {
+    const storedToken = localStorage.getItem('token')
+    if (storedToken && storedToken.split('.').length === 3) {
+      console.log('Token found in localStorage')
+      return storedToken
+    }
+  } catch (e) {
+    console.log('Error reading token from localStorage')
+  }
+  return ''
+}
+
 const ShopContextProvider = (props) => {
   const currency = '₹'
   const delivery_fee = 10
@@ -17,16 +31,7 @@ const ShopContextProvider = (props) => {
   const [products, setProducts] = useState([])
   
   // Initialize token from localStorage immediately to prevent redirect issues
-  const [token, setToken] = useState(() => {
-    const storedToken = localStorage.getItem('token')
-    if (storedToken && storedToken.split('.').length === 3) {
-      return storedToken
-    }
-    return ''
-  })
-  
-  // Track if token has been checked (for protected routes)
-  const [tokenLoaded, setTokenLoaded] = useState(true)
+  const [token, setToken] = useState(getInitialToken)
 
   const addToCart = (itemId, size) => {
     if (!size) {
@@ -176,7 +181,6 @@ const ShopContextProvider = (props) => {
     backendURL,
     setToken,
     token,
-    tokenLoaded,
     setCartItems,
     navigate,
     handleTokenError
