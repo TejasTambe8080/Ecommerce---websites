@@ -8,6 +8,7 @@ import productRouter from './routes/productRotes.js';
 import cartRouter from './routes/cartRoutes.js';
 import orderRouter from './routes/orderRoutes.js';
 
+// Cartiva E-commerce Backend v2.0 - Profile & Address Management
 // App config
 const app = express();
 const port = process.env.PORT || 4000;
