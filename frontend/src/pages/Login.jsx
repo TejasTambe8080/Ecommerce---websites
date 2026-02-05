@@ -19,7 +19,20 @@ const Login = () => {
 
   // Redirect if already logged in - check after auth loading is complete
   useEffect(() => {
-    if (!authLoading && isAuthenticated()) {
+    // Wait for auth loading to complete before checking
+    if (authLoading) {
+      console.log('Login: Still loading auth state, waiting...')
+      return
+    }
+    
+    const storedToken = localStorage.getItem('token')
+    const hasValidToken = (token || storedToken) && 
+                          token !== 'undefined' && 
+                          storedToken !== 'undefined' &&
+                          token !== 'null' && 
+                          storedToken !== 'null'
+    
+    if (hasValidToken) {
       console.log('Login: User already authenticated, redirecting to:', from)
       navigate(from, { replace: true })
     }

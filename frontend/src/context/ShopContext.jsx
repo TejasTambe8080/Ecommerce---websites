@@ -42,9 +42,11 @@ const ShopContextProvider = (props) => {
   // Check if user is authenticated - memoized for consistency
   const isAuthenticated = useCallback(() => {
     const storedToken = localStorage.getItem('token')
-    const hasToken = !!(token || storedToken)
-    console.log('isAuthenticated check:', hasToken, 'token:', !!token, 'stored:', !!storedToken)
-    return hasToken
+    // Check for valid token (not empty, not 'undefined' string, not 'null' string)
+    const currentToken = token || storedToken
+    const hasValidToken = !!(currentToken && currentToken !== 'undefined' && currentToken !== 'null')
+    console.log('isAuthenticated check:', hasValidToken, 'token:', !!token, 'stored:', !!storedToken)
+    return hasValidToken
   }, [token])
 
   // Handle invalid token responses globally
@@ -55,9 +57,12 @@ const ShopContextProvider = (props) => {
     setCartItems({})
   }, [])
 
-  // Validate token on app load
+  // Validate token on app load - ONLY clear token on explicit rejection
   const validateToken = useCallback(async (authToken) => {
-    if (!authToken) {
+    if (!authToken || authToken === 'undefined' || authToken === 'null') {
+      console.log('No valid token to validate')
+      localStorage.removeItem('token')
+      setTokenState('')
       setAuthLoading(false)
       return false
     }
@@ -71,32 +76,48 @@ const ShopContextProvider = (props) => {
       
       if (response.data.success) {
         console.log('Token validated successfully')
+        // Ensure token is synced to state
+        setTokenState(authToken)
         setAuthLoading(false)
         return true
       } else {
-        console.log('Token validation failed:', response.data.message)
-        handleTokenError()
+        // Only clear token if backend explicitly says it's invalid
+        const message = response.data.message || ''
+        if (message.includes('Invalid token') || message.includes('Not Authorized') || message.includes('jwt') || message.includes('expired')) {
+          console.log('Token explicitly rejected by server:', message)
+          handleTokenError()
+        } else {
+          // Other errors (like user not found) - keep token, let UI handle
+          console.log('Profile fetch failed but token may be valid:', message)
+        }
         setAuthLoading(false)
         return false
       }
     } catch (error) {
-      console.log('Token validation error:', error)
-      handleTokenError()
+      // Network error - DO NOT clear token, just log and continue
+      // User might be offline or backend might be temporarily down
+      console.log('Token validation network error (keeping token):', error.message)
       setAuthLoading(false)
-      return false
+      // Return true to keep user logged in during network issues
+      return true
     }
   }, [backendURL, handleTokenError])
 
   // Initialize auth state on mount
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
-    if (storedToken) {
-      // Sync token state with localStorage
-      if (token !== storedToken) {
-        setTokenState(storedToken)
-      }
+    console.log('Auth init - stored token exists:', !!storedToken)
+    
+    if (storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
+      // Immediately sync token to state (don't wait for validation)
+      setTokenState(storedToken)
+      // Then validate in background
       validateToken(storedToken)
     } else {
+      // Clean up any invalid stored values
+      if (storedToken === 'undefined' || storedToken === 'null') {
+        localStorage.removeItem('token')
+      }
       setAuthLoading(false)
     }
   }, []) // Only run on mount

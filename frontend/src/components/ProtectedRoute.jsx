@@ -12,6 +12,8 @@ const ProtectedRoute = ({ children }) => {
   const { token, authLoading } = useContext(ShopContext);
   const location = useLocation();
 
+  console.log('ProtectedRoute - authLoading:', authLoading, 'token:', !!token);
+
   // Show loading spinner while checking auth state
   if (authLoading) {
     return (
@@ -21,10 +23,16 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // Check for token in state or localStorage
-  const authToken = token || localStorage.getItem('token');
+  // Check for token in state or localStorage - validate it's a real token
+  const storedToken = localStorage.getItem('token');
+  const authToken = token || storedToken;
+  
+  // Validate token is not empty, 'undefined' string, or 'null' string
+  const hasValidToken = authToken && authToken !== 'undefined' && authToken !== 'null' && authToken.length > 10;
+  
+  console.log('ProtectedRoute - hasValidToken:', hasValidToken);
 
-  if (!authToken) {
+  if (!hasValidToken) {
     // Redirect to login, save the attempted URL for redirect after login
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
