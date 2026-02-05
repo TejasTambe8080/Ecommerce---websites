@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { assets } from '../assets/assets'
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext.jsx'
@@ -6,15 +6,55 @@ import Logo from './Logo'
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false)
+  const [showDropdown, setShowDropdown] = useState(false)
   const { setShowSearch, getCardCount, navigate, token, setToken, setCartItems } =
     useContext(ShopContext)
+  
+  // Also check localStorage for token (in case context hasn't loaded yet)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token')
+    setIsLoggedIn(!!(token || storedToken))
+  }, [token])
 
   const logout = () => {
-    navigate('/login')
     localStorage.removeItem('token')
     setToken('')
     setCartItems({})
+    setShowDropdown(false)
+    navigate('/login')
   }
+  
+  const handleProfileClick = () => {
+    const storedToken = localStorage.getItem('token')
+    if (token || storedToken) {
+      setShowDropdown(!showDropdown)
+    } else {
+      navigate('/login')
+    }
+  }
+  
+  const goToProfile = () => {
+    setShowDropdown(false)
+    navigate('/profile')
+  }
+  
+  const goToOrders = () => {
+    setShowDropdown(false)
+    navigate('/orders')
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.profile-dropdown')) {
+        setShowDropdown(false)
+      }
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
   return (
     <div className="flex items-center justify-between p-5 font-medium relative">
@@ -58,20 +98,20 @@ const Navbar = () => {
           className="w-5 cursor-pointer"
         />
 
-        <div className="group relative">
+        <div className="group relative profile-dropdown">
           <img
-            onClick={() => (token ? null : navigate('/login'))}
+            onClick={handleProfileClick}
             src={assets.profile_icon}
             alt="profile"
             className="w-5 cursor-pointer"
           />
 
-          {/* Drop down */}
-          {token && (
-            <div className="group-hover:block hidden absolute right-0 pt-4 z-50">
+          {/* Drop down - now using click instead of hover */}
+          {isLoggedIn && showDropdown && (
+            <div className="absolute right-0 pt-4 z-50">
               <div className="flex flex-col gap-2 w-40 py-3 px-5 bg-white border border-gray-200 rounded-lg shadow-lg text-gray-600">
                 <p
-                  onClick={() => navigate('/profile')}
+                  onClick={goToProfile}
                   className="cursor-pointer hover:text-orange-600 flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +120,7 @@ const Navbar = () => {
                   My Profile
                 </p>
                 <p
-                  onClick={() => navigate('/orders')}
+                  onClick={goToOrders}
                   className="cursor-pointer hover:text-orange-600 flex items-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
