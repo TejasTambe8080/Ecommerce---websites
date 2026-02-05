@@ -35,7 +35,17 @@ app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 
 app.get('/', (req, res) => {
-    res.send('API Working');
+    res.send('API Working - v2.1 Profile & Payments');
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        version: '2.1',
+        timestamp: new Date().toISOString(),
+        routes: ['/api/users', '/api/products', '/api/cart', '/api/order']
+    });
 });
 
 app.listen(port, () => {
