@@ -10,38 +10,53 @@ const Login = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  // Clear form when switching between Login and Sign Up
+  const handleStateChange = (newState) => {
+    setName('')
+    setEmail('')
+    setPassword('')
+    setCurrentState(newState)
+  }
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
+    setLoading(true)
 
     try {
       if (currentState === 'Sign Up') {
         const response = await axios.post(
           backendURL + '/api/users/register',
-          { name, email, password }
+          { name, email: email.toLowerCase().trim(), password }
         )
 
         if (response.data.success) {
           setToken(response.data.token)
           localStorage.setItem('token', response.data.token)
+          toast.success('Account created successfully!')
         } else {
           toast.error(response.data.message)
         }
       } else {
         const response = await axios.post(
           backendURL + '/api/users/login',
-          { email, password }
+          { email: email.toLowerCase().trim(), password }
         )
 
         if (response.data.success) {
           setToken(response.data.token)
           localStorage.setItem('token', response.data.token)
+          toast.success('Login successful!')
         } else {
           toast.error(response.data.message)
         }
       }
     } catch (error) {
-      toast.error('Authentication failed')
+      console.log('Auth error:', error)
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -68,6 +83,7 @@ const Login = () => {
       <div className='flex flex-col gap-4 w-full mb-10 bg-gradient-to-r from-orange-50 to-green-50 p-6 rounded-lg'>
         {currentState === 'Sign Up' && (
           <input
+            value={name}
             onChange={(e) => setName(e.target.value)}
             className='w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-gray-500'
             type='text'
@@ -77,6 +93,7 @@ const Login = () => {
         )}
 
         <input
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
           type='email'
           className='w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-gray-500'
@@ -85,6 +102,7 @@ const Login = () => {
         />
 
         <input
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
           type='password'
           className='w-full border border-gray-300 px-3 py-2 rounded focus:outline-none focus:border-gray-500'
@@ -97,23 +115,26 @@ const Login = () => {
 
           {currentState === 'Login' ? (
             <p
-              onClick={() => setCurrentState('Sign Up')}
-              className='cursor-pointer'
+              onClick={() => handleStateChange('Sign Up')}
+              className='cursor-pointer text-orange-600 hover:underline'
             >
               Create account
             </p>
           ) : (
             <p
-              onClick={() => setCurrentState('Login')}
-              className='cursor-pointer'
+              onClick={() => handleStateChange('Login')}
+              className='cursor-pointer text-orange-600 hover:underline'
             >
               Login Here
             </p>
           )}
         </div>
 
-        <button className='bg-black text-white font-medium px-8 py-3 mt-4 hover:bg-gray-800 transition-all rounded'>
-          {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
+        <button 
+          disabled={loading}
+          className='bg-black text-white font-medium px-8 py-3 mt-4 hover:bg-gray-800 transition-all rounded disabled:bg-gray-400 disabled:cursor-not-allowed'
+        >
+          {loading ? 'Please wait...' : (currentState === 'Login' ? 'Sign In' : 'Sign Up')}
         </button>
       </div>
     </form>

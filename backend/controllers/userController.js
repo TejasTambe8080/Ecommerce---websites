@@ -14,20 +14,24 @@ const createToken = (id) => {
 const loginUser = async (req, res) => {
     try{
         const { email, password } = req.body;
-        const user = await userModel.findOne({email});
+        
+        // Normalize email to lowercase for consistent checking
+        const normalizedEmail = email.toLowerCase().trim();
+        
+        const user = await userModel.findOne({ email: normalizedEmail });
         if(!user){
-            return res.json({ success: false, message: "User does not exist" });
+            return res.json({ success: false, message: "User does not exist. Please sign up first." });
         }
         const isMatch = await bcrypt.compare(password, user.password);
         if(isMatch){
             const token = createToken(user._id);
-            res.json({ success: true,token });
+            res.json({ success: true, token });
         }else{
-            res.json({ success: false, message: "Invalid credentials" });
+            res.json({ success: false, message: "Invalid email or password" });
         }
     }catch(error){
         console.log("Error in user login", error);
-        res.json({ success: false, message: "Error in user login" });
+        res.json({ success: false, message: "Error in user login. Please try again." });
     }
 };
 
@@ -36,19 +40,22 @@ const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
+        // Normalize email to lowercase for consistent checking
+        const normalizedEmail = email.toLowerCase().trim();
+
         // check user already exists or not 
-        const exist = await userModel.findOne({ email });
+        const exist = await userModel.findOne({ email: normalizedEmail });
         if (exist) {
-            return res.json({ success: false, message: "User already exists" });
+            return res.json({ success: false, message: "User already exists with this email" });
         }
 
         // validating email & strong password 
-        if (!validator.isEmail(email)) {
-            return res.json({ success: false, message: "Invalid Email" });
+        if (!validator.isEmail(normalizedEmail)) {
+            return res.json({ success: false, message: "Please enter a valid email address" });
         }
 
-        if (!validator.isStrongPassword(password)) {
-            return res.json({ success: false, message: "Password is not strong" });
+        if (password.length < 8) {
+            return res.json({ success: false, message: "Password must be at least 8 characters long" });
         }
 
         // hashing password
@@ -57,8 +64,8 @@ const registerUser = async (req, res) => {
 
         // create user 
         const newUser = new userModel({
-            name,
-            email,
+            name: name.trim(),
+            email: normalizedEmail,
             password: hashedPassword,
         });
 
@@ -67,11 +74,15 @@ const registerUser = async (req, res) => {
         // create token
         const token = createToken(user._id);
 
-        res.json({ success: true, message: "User registered successfully", data: token });
+        res.json({ success: true, message: "User registered successfully", token });
 
     } catch (error) {
         console.log("Error in user registration", error);
-        res.json({ success: false, message: "Error in user registration" });
+        // Check for duplicate key error (MongoDB error code 11000)
+        if (error.code === 11000) {
+            return res.json({ success: false, message: "User already exists with this email" });
+        }
+        res.json({ success: false, message: "Error in user registration. Please try again." });
     }
 };
 
