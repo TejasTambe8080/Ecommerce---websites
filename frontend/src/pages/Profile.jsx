@@ -7,7 +7,7 @@ import AddressCard from '../components/AddressCard.jsx';
 import AddressModal from '../components/AddressModal.jsx';
 
 const Profile = () => {
-  const { token, backendURL, navigate } = useContext(ShopContext);
+  const { token, backendURL, navigate, handleTokenError } = useContext(ShopContext);
   
   // User profile state
   const [user, setUser] = useState(null);
@@ -30,13 +30,17 @@ const Profile = () => {
   // Redirect if not logged in
   useEffect(() => {
     if (!token) {
-      toast.info('Please login to view your profile');
       navigate('/login');
     }
   }, [token, navigate]);
 
   // Fetch user profile
   const fetchProfile = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+    
     try {
       setLoading(true);
       const response = await axios.get(
@@ -52,11 +56,21 @@ const Profile = () => {
         });
         setImagePreview(response.data.user.profileImage || '');
       } else {
-        toast.error(response.data.message);
+        // Handle invalid token
+        if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
+          handleTokenError();
+        } else {
+          toast.error(response.data.message);
+        }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
-      toast.error('Failed to load profile');
+      // Don't show error for 404 or auth issues
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        handleTokenError();
+      } else if (error.response?.status !== 404) {
+        toast.error('Failed to load profile');
+      }
     } finally {
       setLoading(false);
     }

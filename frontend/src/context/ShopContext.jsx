@@ -64,10 +64,14 @@ const ShopContextProvider = (props) => {
       if (response.data.success) {
         setCartItems(response.data.cartData)
       } else {
-        toast.error(response.data.message)
+        // Don't show error for auth issues - just clear token
+        if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
+          handleTokenError()
+        }
       }
     } catch (error) {
-      toast.error('Failed to fetch cart data')
+      console.log('Error fetching cart:', error)
+      // Don't show toast for cart fetch errors on page load
     }
   }
 
@@ -126,12 +130,27 @@ const ShopContextProvider = (props) => {
     getProductDta()
   }, [])
 
+  // Validate and restore token from localStorage
   useEffect(() => {
-    if (!token && localStorage.getItem('token')) {
-      setToken(localStorage.getItem('token'))
-      getuserCart(localStorage.getItem('token'))
+    const storedToken = localStorage.getItem('token');
+    if (!token && storedToken) {
+      // Basic token validation - check if it looks like a JWT
+      if (storedToken.split('.').length === 3) {
+        setToken(storedToken);
+        getuserCart(storedToken);
+      } else {
+        // Invalid token format, clear it
+        localStorage.removeItem('token');
+      }
     }
   }, [])
+
+  // Handle invalid token responses globally
+  const handleTokenError = () => {
+    localStorage.removeItem('token');
+    setToken('');
+    setCartItems({});
+  }
 
   useEffect(() => {
     console.log('Cart Items Updated:', cartItems)
@@ -155,7 +174,8 @@ const ShopContextProvider = (props) => {
     setToken,
     token,
     setCartItems,
-    navigate
+    navigate,
+    handleTokenError
   }
 
   return (
