@@ -151,6 +151,10 @@ const updateUserProfile = async (req, res) => {
         const userId = req.userId;
         const { name, phone } = req.body;
 
+        console.log("Profile update request for user:", userId);
+        console.log("Request body:", { name, phone });
+        console.log("File received:", req.file ? "Yes" : "No");
+
         // Validation
         if (name && name.trim().length < 2) {
             return res.json({ success: false, message: "Name must be at least 2 characters" });
@@ -160,27 +164,46 @@ const updateUserProfile = async (req, res) => {
             return res.json({ success: false, message: "Please enter a valid 10-digit phone number" });
         }
 
-        // Handle profile image upload
+        // Handle profile image upload using buffer (for memory storage)
         let profileImageUrl = null;
         if (req.file) {
-            const result = await cloudinary.uploader.upload(req.file.path, {
-                folder: 'cartiva/profiles',
-                resource_type: 'image'
-            });
-            profileImageUrl = result.secure_url;
+            try {
+                // Convert buffer to base64 data URI for Cloudinary upload
+                const b64 = Buffer.from(req.file.buffer).toString('base64');
+                const dataURI = `data:${req.file.mimetype};base64,${b64}`;
+                
+                const result = await cloudinary.uploader.upload(dataURI, {
+                    folder: 'cartiva/profiles',
+                    resource_type: 'image',
+                    public_id: `profile_${userId}_${Date.now()}`
+                });
+                profileImageUrl = result.secure_url;
+                console.log("Profile image uploaded to Cloudinary:", profileImageUrl);
+            } catch (uploadError) {
+                console.error("Cloudinary upload error:", uploadError);
+                return res.status(500).json({ success: false, message: "Failed to upload profile image" });
+            }
         }
 
         // Build update object
         const updateData = {};
         if (name) updateData.name = name.trim();
-        if (phone) updateData.phone = phone;
+        if (phone !== undefined) updateData.phone = phone;
         if (profileImageUrl) updateData.profileImage = profileImageUrl;
+
+        console.log("Update data:", updateData);
 
         const user = await userModel.findByIdAndUpdate(
             userId,
             updateData,
             { new: true }
         ).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        console.log("Profile updated successfully for user:", userId);
 
         res.json({ 
             success: true, 
@@ -191,6 +214,8 @@ const updateUserProfile = async (req, res) => {
                 email: user.email,
                 phone: user.phone || '',
                 profileImage: user.profileImage || '',
+                addresses: user.addresses || [],
+                defaultAddressId: user.defaultAddressId,
                 createdAt: user.createdAt
             }
         });

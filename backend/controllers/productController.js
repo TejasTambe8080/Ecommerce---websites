@@ -1,6 +1,17 @@
 import { v2 as cloudinary } from "cloudinary";
 import productModel from "../models/productModels.js";
 
+// Helper function to upload buffer to Cloudinary
+const uploadToCloudinary = async (file) => {
+    const b64 = Buffer.from(file.buffer).toString('base64');
+    const dataURI = `data:${file.mimetype};base64,${b64}`;
+    const result = await cloudinary.uploader.upload(dataURI, {
+        resource_type: "image",
+        folder: "cartiva/products"
+    });
+    return result.secure_url;
+};
+
 // function for add product 
 const addProduct = async (req, res) => {
     try {
@@ -17,10 +28,7 @@ const addProduct = async (req, res) => {
 
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
-                let result = await cloudinary.uploader.upload(item.path, {
-                    resource_type: "image",
-                });
-                return result.secure_url;
+                return await uploadToCloudinary(item);
             })
         );
 
