@@ -15,7 +15,18 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false)
   const [cartItems, setCartItems] = useState({})
   const [products, setProducts] = useState([])
-  const [token, setToken] = useState('')
+  
+  // Initialize token from localStorage immediately to prevent redirect issues
+  const [token, setToken] = useState(() => {
+    const storedToken = localStorage.getItem('token')
+    if (storedToken && storedToken.split('.').length === 3) {
+      return storedToken
+    }
+    return ''
+  })
+  
+  // Track if token has been checked (for protected routes)
+  const [tokenLoaded, setTokenLoaded] = useState(true)
 
   const addToCart = (itemId, size) => {
     if (!size) {
@@ -130,20 +141,12 @@ const ShopContextProvider = (props) => {
     getProductDta()
   }, [])
 
-  // Validate and restore token from localStorage
+  // Load cart data when token is available
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (!token && storedToken) {
-      // Basic token validation - check if it looks like a JWT
-      if (storedToken.split('.').length === 3) {
-        setToken(storedToken);
-        getuserCart(storedToken);
-      } else {
-        // Invalid token format, clear it
-        localStorage.removeItem('token');
-      }
+    if (token) {
+      getuserCart(token)
     }
-  }, [])
+  }, [token])
 
   // Handle invalid token responses globally
   const handleTokenError = () => {
@@ -173,6 +176,7 @@ const ShopContextProvider = (props) => {
     backendURL,
     setToken,
     token,
+    tokenLoaded,
     setCartItems,
     navigate,
     handleTokenError

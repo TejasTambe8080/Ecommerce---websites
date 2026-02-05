@@ -7,7 +7,7 @@ import AddressCard from '../components/AddressCard.jsx';
 import AddressModal from '../components/AddressModal.jsx';
 
 const Profile = () => {
-  const { token, backendURL, navigate, handleTokenError } = useContext(ShopContext);
+  const { token, backendURL, navigate, handleTokenError, tokenLoaded } = useContext(ShopContext);
   
   // User profile state
   const [user, setUser] = useState(null);
@@ -27,12 +27,12 @@ const Profile = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
-  // Redirect if not logged in
+  // Redirect if not logged in (only after token is loaded)
   useEffect(() => {
-    if (!token) {
+    if (tokenLoaded && !token) {
       navigate('/login');
     }
-  }, [token, navigate]);
+  }, [token, navigate, tokenLoaded]);
 
   // Fetch user profile
   const fetchProfile = async () => {
