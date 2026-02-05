@@ -65,14 +65,12 @@ const Profile = () => {
         setImagePreview(response.data.user.profileImage || '');
       } else {
         console.log('Profile: Error response:', response.data.message);
-        if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
-          handleTokenError();
-        } else {
-          toast.error(response.data.message);
-        }
+        // DO NOT clear token here - just show error
+        toast.error(response.data.message || 'Failed to load profile');
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      toast.error('Failed to load profile');
     } finally {
       setLoading(false);
     }

@@ -103,23 +103,17 @@ const ShopContextProvider = (props) => {
     }
   }, [backendURL, handleTokenError])
 
-  // Initialize auth state on mount
+  // Initialize auth state on mount - SIMPLE: read from localStorage, set authLoading=false
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
     console.log('Auth init - stored token exists:', !!storedToken)
     
     if (storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
-      // Immediately sync token to state (don't wait for validation)
+      // Just sync token to state - NO validation
       setTokenState(storedToken)
-      // Then validate in background
-      validateToken(storedToken)
-    } else {
-      // Clean up any invalid stored values
-      if (storedToken === 'undefined' || storedToken === 'null') {
-        localStorage.removeItem('token')
-      }
-      setAuthLoading(false)
     }
+    // Always set authLoading to false immediately
+    setAuthLoading(false)
   }, []) // Only run on mount
 
   // ========================================

@@ -6,7 +6,7 @@ import { ShopContext } from '../context/ShopContext.jsx'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login')
-  const { token, setToken, navigate, backendURL, isAuthenticated, authLoading } = useContext(ShopContext)
+  const { token, setToken, navigate, backendURL } = useContext(ShopContext)
   const location = useLocation()
 
   const [name, setName] = useState('')
@@ -17,26 +17,12 @@ const Login = () => {
   // Get the redirect destination (if coming from a protected route)
   const from = location.state?.from || '/'
 
-  // Redirect if already logged in - check after auth loading is complete
+  // SIMPLE: If token exists, redirect to intended destination
   useEffect(() => {
-    // Wait for auth loading to complete before checking
-    if (authLoading) {
-      console.log('Login: Still loading auth state, waiting...')
-      return
-    }
-    
-    const storedToken = localStorage.getItem('token')
-    const hasValidToken = (token || storedToken) && 
-                          token !== 'undefined' && 
-                          storedToken !== 'undefined' &&
-                          token !== 'null' && 
-                          storedToken !== 'null'
-    
-    if (hasValidToken) {
-      console.log('Login: User already authenticated, redirecting to:', from)
+    if (token) {
       navigate(from, { replace: true })
     }
-  }, [authLoading, token]) // Check when authLoading completes or token changes
+  }, [token])
 
   // Clear form when switching between Login and Sign Up
   const handleStateChange = (newState) => {
