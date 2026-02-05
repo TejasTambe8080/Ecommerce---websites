@@ -5,16 +5,21 @@ import axios from 'axios';
 import Title from '../components/Title.jsx';
 import AddressCard from '../components/AddressCard.jsx';
 import AddressModal from '../components/AddressModal.jsx';
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
-  const { token, backendURL, navigate, handleTokenError } = useContext(ShopContext);
+  const { token, backendURL, navigate, handleTokenError, setToken } = useContext(ShopContext);
+  
+  // Get token from localStorage directly (more reliable)
+  const getAuthToken = () => {
+    return token || localStorage.getItem('token');
+  };
   
   // User profile state
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
   
   // Edit form state
   const [editForm, setEditForm] = useState({
@@ -28,28 +33,22 @@ const Profile = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
 
-  // Check auth on mount - only redirect if truly not logged in
+  // Fetch user profile on mount
   useEffect(() => {
-    const checkAuth = () => {
-      const storedToken = localStorage.getItem('token');
-      console.log('Profile: Checking auth - token:', !!token, 'storedToken:', !!storedToken);
-      
-      if (!token && !storedToken) {
-        console.log('Profile: No token found, redirecting to login');
-        navigate('/login');
+    const authToken = getAuthToken();
+    if (authToken) {
+      // Sync token to context if not already there
+      if (!token && authToken) {
+        setToken(authToken);
       }
-      setAuthChecked(true);
-    };
-    
-    // Small delay to ensure context is initialized
-    const timer = setTimeout(checkAuth, 100);
-    return () => clearTimeout(timer);
+      fetchProfile(authToken);
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   // Fetch user profile
-  const fetchProfile = async () => {
-    const authToken = token || localStorage.getItem('token');
-    
+  const fetchProfile = async (authToken) => {
     if (!authToken) {
       setLoading(false);
       return;
@@ -70,32 +69,18 @@ const Profile = () => {
         });
         setImagePreview(response.data.user.profileImage || '');
       } else {
-        // Handle invalid token
         if (response.data.message === 'Invalid token' || response.data.message === 'Not Authorized. Login again') {
           handleTokenError();
-          navigate('/login');
         } else {
           toast.error(response.data.message);
         }
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
-      // Only redirect on actual auth errors, not network errors
-      if (error.response?.status === 401 || error.response?.status === 403) {
-        handleTokenError();
-        navigate('/login');
-      }
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const authToken = token || localStorage.getItem('token');
-    if (authToken && authChecked) {
-      fetchProfile();
-    }
-  }, [token, authChecked]);
 
   // Handle profile image change
   const handleImageChange = (e) => {
@@ -270,6 +255,25 @@ const Profile = () => {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  // Show login prompt if not logged in
+  if (!getAuthToken()) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
+        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <h2 className="text-xl font-semibold text-gray-700">Please Login</h2>
+        <p className="text-gray-500">You need to login to view your profile</p>
+        <Link 
+          to="/login" 
+          className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          Login Now
+        </Link>
       </div>
     );
   }
