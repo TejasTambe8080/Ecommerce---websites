@@ -255,21 +255,11 @@ const Profile = () => {
     );
   }
 
-  // Show login prompt if not logged in
-  if (!isAuthenticated()) {
+  // If no user data loaded yet, show loading (ProtectedRoute handles auth)
+  if (!user) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-4">
-        <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-        </svg>
-        <h2 className="text-xl font-semibold text-gray-700">Please Login</h2>
-        <p className="text-gray-500">You need to login to view your profile</p>
-        <Link 
-          to="/login" 
-          className="mt-4 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-        >
-          Login Now
-        </Link>
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-500 border-t-transparent"></div>
       </div>
     );
   }

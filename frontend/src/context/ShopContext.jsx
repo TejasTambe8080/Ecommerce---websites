@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react'
+import { createContext, useEffect, useState, useCallback } from 'react'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -24,9 +24,12 @@ const ShopContextProvider = (props) => {
     console.log('ShopContext Init - Token from localStorage:', !!storedToken)
     return storedToken || ''
   })
+  
+  // Loading state for auth initialization
+  const [authLoading, setAuthLoading] = useState(true)
 
   // Custom setToken that also updates localStorage
-  const setToken = (newToken) => {
+  const setToken = useCallback((newToken) => {
     console.log('setToken called with:', !!newToken)
     if (newToken) {
       localStorage.setItem('token', newToken)
@@ -34,21 +37,69 @@ const ShopContextProvider = (props) => {
       localStorage.removeItem('token')
     }
     setTokenState(newToken)
-  }
+  }, [])
 
-  // Check if user is authenticated
-  const isAuthenticated = () => {
+  // Check if user is authenticated - memoized for consistency
+  const isAuthenticated = useCallback(() => {
     const storedToken = localStorage.getItem('token')
-    return !!(token || storedToken)
-  }
+    const hasToken = !!(token || storedToken)
+    console.log('isAuthenticated check:', hasToken, 'token:', !!token, 'stored:', !!storedToken)
+    return hasToken
+  }, [token])
 
   // Handle invalid token responses globally
-  const handleTokenError = () => {
+  const handleTokenError = useCallback(() => {
     console.log('Token error - clearing auth')
     localStorage.removeItem('token')
     setTokenState('')
     setCartItems({})
-  }
+  }, [])
+
+  // Validate token on app load
+  const validateToken = useCallback(async (authToken) => {
+    if (!authToken) {
+      setAuthLoading(false)
+      return false
+    }
+    
+    try {
+      // Make a lightweight API call to validate token
+      const response = await axios.get(
+        `${backendURL}/api/users/profile`,
+        { headers: { token: authToken } }
+      )
+      
+      if (response.data.success) {
+        console.log('Token validated successfully')
+        setAuthLoading(false)
+        return true
+      } else {
+        console.log('Token validation failed:', response.data.message)
+        handleTokenError()
+        setAuthLoading(false)
+        return false
+      }
+    } catch (error) {
+      console.log('Token validation error:', error)
+      handleTokenError()
+      setAuthLoading(false)
+      return false
+    }
+  }, [backendURL, handleTokenError])
+
+  // Initialize auth state on mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem('token')
+    if (storedToken) {
+      // Sync token state with localStorage
+      if (token !== storedToken) {
+        setTokenState(storedToken)
+      }
+      validateToken(storedToken)
+    } else {
+      setAuthLoading(false)
+    }
+  }, []) // Only run on mount
 
   // ========================================
   // CART FUNCTIONS
@@ -197,9 +248,11 @@ const ShopContextProvider = (props) => {
     setToken,
     token,
     isAuthenticated,
+    authLoading,
     setCartItems,
     navigate,
-    handleTokenError
+    handleTokenError,
+    validateToken
   }
 
   return (

@@ -1,24 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import { useLocation } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext.jsx'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login')
-  const { token, setToken, navigate, backendURL, isAuthenticated } = useContext(ShopContext)
+  const { token, setToken, navigate, backendURL, isAuthenticated, authLoading } = useContext(ShopContext)
+  const location = useLocation()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Redirect to home if already logged in - check on mount only
+  // Get the redirect destination (if coming from a protected route)
+  const from = location.state?.from || '/'
+
+  // Redirect if already logged in - check after auth loading is complete
   useEffect(() => {
-    if (isAuthenticated()) {
-      console.log('Login: User already authenticated, redirecting to home')
-      navigate('/')
+    if (!authLoading && isAuthenticated()) {
+      console.log('Login: User already authenticated, redirecting to:', from)
+      navigate(from, { replace: true })
     }
-  }, []) // Empty dependency - only check on mount
+  }, [authLoading, token]) // Check when authLoading completes or token changes
 
   // Clear form when switching between Login and Sign Up
   const handleStateChange = (newState) => {
@@ -42,7 +47,7 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token)
           toast.success('Account created successfully!')
-          navigate('/') // Navigate after successful signup
+          navigate(from, { replace: true }) // Navigate to intended destination
         } else {
           toast.error(response.data.message)
         }
@@ -55,7 +60,7 @@ const Login = () => {
         if (response.data.success) {
           setToken(response.data.token)
           toast.success('Login successful!')
-          navigate('/') // Navigate after successful login
+          navigate(from, { replace: true }) // Navigate to intended destination
         } else {
           toast.error(response.data.message)
         }
