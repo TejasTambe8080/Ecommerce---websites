@@ -20,8 +20,8 @@ const Navbar = () => {
   
   const handleProfileClick = (e) => {
     e.stopPropagation()
-    console.log('Profile icon clicked, isAuthenticated:', isAuthenticated())
-    if (isAuthenticated()) {
+    // isAuthenticated is now a derived boolean from token state
+    if (isAuthenticated) {
       setShowDropdown(!showDropdown)
     } else {
       navigate('/login')
@@ -101,7 +101,7 @@ const Navbar = () => {
           />
 
           {/* Drop down - now using click instead of hover */}
-          {isAuthenticated() && showDropdown && (
+          {isAuthenticated && showDropdown && (
             <div className="absolute right-0 pt-4 z-50">
               <div className="flex flex-col gap-2 w-40 py-3 px-5 bg-white border border-gray-200 rounded-lg shadow-lg text-gray-600">
                 <p
@@ -208,7 +208,7 @@ const Navbar = () => {
             CONTACT
           </NavLink>
 
-          {token && (
+          {isAuthenticated && (
             <>
               <NavLink
                 onClick={() => setVisible(false)}
@@ -236,7 +236,7 @@ const Navbar = () => {
             </>
           )}
 
-          {!token && (
+          {!isAuthenticated && (
             <NavLink
               onClick={() => setVisible(false)}
               className="py-2 pl-6 border"

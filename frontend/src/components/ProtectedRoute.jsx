@@ -7,10 +7,11 @@ import { ShopContext } from '../context/ShopContext.jsx';
  * SIMPLE: Wait for authLoading, then check token exists
  */
 const ProtectedRoute = ({ children }) => {
-  const { token, authLoading } = useContext(ShopContext);
+  const { authLoading, isAuthenticated } = useContext(ShopContext);
   const location = useLocation();
 
-  // Wait for auth state to initialize
+  // Wait for auth state to initialize from localStorage
+  // Prevents premature redirect before token is restored
   if (authLoading) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
@@ -19,8 +20,8 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // ONLY check if token exists in context state
-  if (!token) {
+  // Check derived auth boolean (based on token state)
+  if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 

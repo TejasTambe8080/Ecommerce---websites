@@ -6,7 +6,7 @@ import { ShopContext } from '../context/ShopContext.jsx'
 
 const Login = () => {
   const [currentState, setCurrentState] = useState('Login')
-  const { token, setToken, navigate, backendURL } = useContext(ShopContext)
+  const { token, setToken, navigate, backendURL, isAuthenticated } = useContext(ShopContext)
   const location = useLocation()
 
   const [name, setName] = useState('')
@@ -17,12 +17,12 @@ const Login = () => {
   // Get the redirect destination (if coming from a protected route)
   const from = location.state?.from || '/'
 
-  // SIMPLE: If token exists, redirect to intended destination
+  // If already authenticated, redirect to intended destination
   useEffect(() => {
-    if (token) {
+    if (isAuthenticated) {
       navigate(from, { replace: true })
     }
-  }, [token])
+  }, [isAuthenticated])
 
   // Clear form when switching between Login and Sign Up
   const handleStateChange = (newState) => {

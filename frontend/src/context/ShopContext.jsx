@@ -21,8 +21,12 @@ const ShopContextProvider = (props) => {
   // ========================================
   const [token, setTokenState] = useState(() => {
     const storedToken = localStorage.getItem('token')
-    console.log('ShopContext Init - Token from localStorage:', !!storedToken)
-    return storedToken || ''
+    // Validate stored token - clean up invalid values
+    if (storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
+      return storedToken
+    }
+    localStorage.removeItem('token')
+    return ''
   })
   
   // Loading state for auth initialization
@@ -39,15 +43,9 @@ const ShopContextProvider = (props) => {
     setTokenState(newToken)
   }, [])
 
-  // Check if user is authenticated - memoized for consistency
-  const isAuthenticated = useCallback(() => {
-    const storedToken = localStorage.getItem('token')
-    // Check for valid token (not empty, not 'undefined' string, not 'null' string)
-    const currentToken = token || storedToken
-    const hasValidToken = !!(currentToken && currentToken !== 'undefined' && currentToken !== 'null')
-    console.log('isAuthenticated check:', hasValidToken, 'token:', !!token, 'stored:', !!storedToken)
-    return hasValidToken
-  }, [token])
+  // Derived auth state - simple boolean that updates whenever token changes
+  // NOT a function — use as: isAuthenticated (not isAuthenticated())
+  const isAuthenticated = !!(token && token !== 'undefined' && token !== 'null')
 
   // Handle invalid token responses globally
   const handleTokenError = useCallback(() => {
@@ -103,18 +101,11 @@ const ShopContextProvider = (props) => {
     }
   }, [backendURL, handleTokenError])
 
-  // Initialize auth state on mount - SIMPLE: read from localStorage, set authLoading=false
+  // Token is already loaded from localStorage synchronously in useState initializer
+  // Just mark auth loading as complete after first render
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
-    console.log('Auth init - stored token exists:', !!storedToken)
-    
-    if (storedToken && storedToken !== 'undefined' && storedToken !== 'null') {
-      // Just sync token to state - NO validation
-      setTokenState(storedToken)
-    }
-    // Always set authLoading to false immediately
     setAuthLoading(false)
-  }, []) // Only run on mount
+  }, [])
 
   // ========================================
   // CART FUNCTIONS
